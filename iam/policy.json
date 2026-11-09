@@ -1,0 +1,44 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadInventory",
+      "Effect": "Allow",
+      "Action": ["ec2:DescribeInstances", "ec2:DescribeSnapshots"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SnapshotVolumes",
+      "Effect": "Allow",
+      "Action": "ec2:CreateSnapshot",
+      "Resource": "arn:aws:ec2:*:*:volume/*"
+    },
+    {
+      "Sid": "CreateManagedSnapshots",
+      "Effect": "Allow",
+      "Action": "ec2:CreateSnapshot",
+      "Resource": "arn:aws:ec2:*::snapshot/*",
+      "Condition": {
+        "StringEquals": {"aws:RequestTag/CreatedBy": "ebs-snapshot-backup"}
+      }
+    },
+    {
+      "Sid": "TagAtCreationOnly",
+      "Effect": "Allow",
+      "Action": "ec2:CreateTags",
+      "Resource": "arn:aws:ec2:*::snapshot/*",
+      "Condition": {
+        "StringEquals": {"ec2:CreateAction": "CreateSnapshot"}
+      }
+    },
+    {
+      "Sid": "DeleteManagedSnapshotsOnly",
+      "Effect": "Allow",
+      "Action": "ec2:DeleteSnapshot",
+      "Resource": "arn:aws:ec2:*::snapshot/*",
+      "Condition": {
+        "StringEquals": {"aws:ResourceTag/CreatedBy": "ebs-snapshot-backup"}
+      }
+    }
+  ]
+}
