@@ -4,6 +4,8 @@
 
 Back up EBS volumes attached to running EC2 instances tagged `Backup=true`, then remove this automation's snapshots when they are older than 30 days.
 
+See [`DESIGN.md`](DESIGN.md) for the backup flow, retention guards, and failure boundary.
+
 ## How it works
 
 `ebs-snapshot-backup.sh` uses AWS CLI to find matching instances in one AWS region. For each attached EBS volume, it checks for a `pending` or `completed` snapshot with today's UTC `BackupDate`. If none exists, it creates a snapshot with `CreatedBy=ebs-snapshot-backup`, `BackupDate`, and `SourceInstanceId` tags.
